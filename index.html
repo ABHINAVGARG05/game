@@ -19,8 +19,9 @@
                 <ul id="scoreList" class="hide jungle-score-list"></ul>
             </div>
             <div id="leaderboardContainer" class="hide jungle-leaderboard" style="font-family: caviet,cursive;" >
-                <h2 style="color:#3b7a57">Leaderboard</h2>
-                <ul id="leaderboard"></ul>
+                <h2 style="color:greenyellow"">Save Score</h2>
+                <h1 style="color:aliceblue" id="score-text"></h1>
+                <button type="button" id="save-score">Save</button>
             </div>
             <div id="instructionMessage" class="instruction-message jungle-message"></div>
             <div id="gameoverMessage" class="game-over-message jungle-message"></div>
@@ -29,10 +30,13 @@
                 <label for="playerName" style="color:black; font-family: caviet, cursive;">ENTER YOUR NAME:</label>
                 <input type="text" id="playerName" name="playerName" style="font-family: caviet;"required>
                 <br>
+                <label for="password" style="color:black; font-family: caviet, cursive;">ENTER YOUR PASSWORD:</label>
+                <input type="text" id="playerPassword" name="password" style="font-family: caviet;"required>
+                <br>
                 <label for="difficulty" style="color:BLACK; font-family: caviet, CURSIVE;" >CHOOSE DIFFICULTY:</label>
                 <select id="difficulty" name="difficulty" style="font-family: caviet,cursive;">
                     <option value="easy" style="font-family: caviet,cursive;" >Easy</option>
-                    <option value="medium"  style="font-family: caviet,cursive;">Medium</option>
+                    <option value="medium" style="font-family: caviet,cursive;" >Medium</option>
                     <option value="hard" style="font-family: caviet,cursive;" >Hard</option>
                 </select>
                 <br>

@@ -1,7 +1,10 @@
+const BE_URL = "https://gaming-portal-be-seven.vercel.app/score";
+
 const canvas = document.getElementById('gameCanvas');
 const gameCanvasContainer = document.getElementById('gameCanvasContainer');
 const ctx = canvas.getContext('2d');
 const playerNameInput = document.getElementById('playerName');
+const playerPasswordInput = document.getElementById('playerPassword');
 const difficultySelect = document.getElementById('difficulty');
 const startGameButton = document.getElementById('startGame');
 const okButton = document.getElementById('ok-button')
@@ -19,9 +22,14 @@ const killingAudio = document.getElementById('killing_Audio');
 const player1  = document.getElementById('player');
 let sessionStartTime;
 const coinaudio = document.getElementById('coinAudio')
-const instructions = document.getElementById('instructions');  // added
+const instructions = document.getElementById('instructions'); 
+const scoreText = document.getElementById("score-text")
+const saveScoreButton = document.getElementById("save-score"); // added
 //const gameContainer = document.getElementById('Container');  // added
 
+let playerName, playerPassword, maze, player, chaser, goal, score;
+const mazeSize = { easy: 10, medium: 15, hard: 20 };
+const cellSize = 20;
 
 function playGameAudio() {
     gameAudio.currentTime = 0; 
@@ -42,11 +50,6 @@ function playkill(){
 function stopGameAudio() {
     gameAudio.pause(); 
 }
-
-
-let playerName, maze, player, chaser, goal, score;
-const mazeSize = { easy: 10, medium: 15, hard: 20 };
-const cellSize = 20;
 
 const forestImage = new Image();
 forestImage.src = 'pics/forest.png';
@@ -308,7 +311,7 @@ function checkCoinCollection() {
         if (player.x === coins[i].x && player.y === coins[i].y) {
             playcoinAudio()
             coins.splice(i, 1);
-            score += 10; 
+            score += 5; 
             break;
         }
     }
@@ -355,14 +358,13 @@ function initGame() {
 }
 
 function updateScore() {
-    leaderboardList.innerHTML = '';
-    let scores = JSON.parse(localStorage.getItem('scores')) || [];
-    scores.sort((a, b) => b.score - a.score);
-    scores.slice(0, 10).forEach((score, index) => {
-        let li = document.createElement('li');
-        li.textContent = `${index + 1}. ${score.name}: ${score.score}`;
-        leaderboardList.appendChild(li);
-    });
+    scoreText.innerHTML = score;
+    // scores.sort((a, b) => b.score - a.score);
+    // scores.slice(0, 10).forEach((score, index) => {
+    //     let li = document.createElement('li');
+    //     li.textContent = ${index + 1}. ${score.name}: ${score.score};
+    //     leaderboardList.appendChild(li);
+    // });
 }
 
 function saveScore() {
@@ -430,7 +432,7 @@ function gameLoop() {
     } else if (player.x === goal.x && player.y === goal.y) {
         advanceLevel();
         stopGameAudio();
-        score+=50;
+        score+=30;
         setTimeout( ()=>{
             playGameAudio();
         },2000);
@@ -470,6 +472,7 @@ document.addEventListener('keydown', (e) => {
 // resizeCanvas();
 
 startGameButton.addEventListener('click',()=>{
+  if (playerNameInput.value && playerPasswordInput.value){
     gameCanvasContainer.classList.add('hide');
     mazeContainer.classList.add('hide');
     leaderboardContainer.classList.add('hide');
@@ -478,6 +481,7 @@ startGameButton.addEventListener('click',()=>{
     messageElement.textContent = '';
     form.classList.add('hide');
     canvas.focus();
+  }
 })
 
 okButton.addEventListener('click', () => {
@@ -496,10 +500,45 @@ okButton.addEventListener('click', () => {
 
     
 });
+
 function clearLeaderboard() {
     localStorage.removeItem('scores');
     updateScore();
 }
+
+playerNameInput.addEventListener('change', ()=>{
+  playerName = playerNameInput.value;
+})
+playerPasswordInput.addEventListener('change', ()=>{
+  playerPassword = playerPasswordInput.value;
+})
+
+async function saveScore(score, username, password){
+  try {
+    const response = await fetch(BE_URL, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        score,
+        userId: username,
+        game: "maze",
+        password
+      })
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error in saveScore:', error);
+  }
+};
+
+saveScoreButton.addEventListener("click", async function(){
+  const data = await saveScore(score, playerName, playerPassword);
+  if (data.success) alert(data.message);
+  else alert(data.error);
+})
+
 clearLeaderboard();
 updateScore();
-
