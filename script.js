@@ -1,4 +1,5 @@
 const BE_URL = "https://gaming-portal-be-seven.vercel.app/score";
+const FE_URL = "https://portal-frontend-six.vercel.app/"
 
 const canvas = document.getElementById('gameCanvas');
 const gameCanvasContainer = document.getElementById('gameCanvasContainer');
@@ -311,7 +312,7 @@ function checkCoinCollection() {
         if (player.x === coins[i].x && player.y === coins[i].y) {
             playcoinAudio()
             coins.splice(i, 1);
-            score += 5; 
+            score += 10; 
             break;
         }
     }
@@ -432,7 +433,7 @@ function gameLoop() {
     } else if (player.x === goal.x && player.y === goal.y) {
         advanceLevel();
         stopGameAudio();
-        score+=30;
+        score+=50;
         setTimeout( ()=>{
             playGameAudio();
         },2000);
@@ -536,8 +537,10 @@ async function saveScore(score, username, password){
 
 saveScoreButton.addEventListener("click", async function(){
   const data = await saveScore(score, playerName, playerPassword);
-  if (data.success) alert(data.message);
-  else alert(data.error);
+  if (data.success) {
+    alert(data.message);
+    window.location.replace(FE_URL);
+  } else alert(data.error);
 })
 
 clearLeaderboard();
